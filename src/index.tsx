@@ -29,10 +29,11 @@ Flags:
 
   process.exitCode = 0
 } else {
+  await setWeightFromFile('prod')
+
   const path = process.argv[2]
   if (path) {
     console.time('build complete')
-    await setWeightFromFile('prod')
 
     const projectJson = getProjectJson()
     if (process.argv.includes('--copy'))
