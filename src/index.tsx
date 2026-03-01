@@ -3,7 +3,7 @@ import { createWriteStream } from 'fs'
 import { pack } from 'tar-stream'
 import { resolve } from 'path'
 import { Main } from './main'
-import { setWeightFromFile } from './matrix'
+import { setWeightFromFile } from './weight'
 
 function getProjectJson() {
   return JSON.stringify(jsxToProject(<Main />))

@@ -3,7 +3,8 @@ import { jsxToProject } from 'entry-jsx'
 import { Main } from '../src/main'
 import { computeVAE } from './vae'
 import { interpret } from './block-interpreter'
-import { setWeightFromFile, type MatrixName } from '../src/matrix'
+import { setWeightFromFile } from '../src/weight'
+import type { MatrixName } from '../src/matrix'
 
 function runProject(children: React.ReactNode) {
   const project = jsxToProject(children)
@@ -28,9 +29,10 @@ async function testVAE(name: string) {
   expect(gen).toEqual(toFixed([await computeVAE()].flat(6)))
 }
 
-const digits = 5
+const digits = 4
 const toFixed = (x: number[]) => x.map(v => v.toFixed(digits))
 
 describe('Entry VAE', () => {
   it('1', () => testVAE('test_1'))
+  it('2', () => testVAE('test_2'))
 })

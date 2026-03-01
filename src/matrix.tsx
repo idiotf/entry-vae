@@ -33,8 +33,11 @@ const matrices: Record<MatrixName, number[]> = {
 }
 
 export const getMatrix = (name: MatrixName) => matrices[name]
-export const setWeightFromFile = async (name: string): Promise<typeof matrices> =>
-  Object.assign(matrices, (await import(`../weights/${name}.json`)).default)
+export async function setMatrixWeightFromFile(name: string) {
+  const { weight } = (await import(`../weights/${name}.json`)).default
+  Object.assign(matrices, weight)
+}
+
 
 export const Matrices = () => Object.entries(matrices).map(([name, value], i) =>
   <List key={i}
@@ -48,10 +51,22 @@ export const Matrices = () => Object.entries(matrices).map(([name, value], i) =>
 )
 
 export const InitData = ({ keepZ }: { keepZ?: boolean }) => <>
-  <SetVariable name='output_dim'>
+  <SetVariable name='pixels'>
     <CalcTimes
       param1={<GetVariable name='width' />}
       param2={<GetVariable name='height' />}
+    />
+  </SetVariable>
+  <SetVariable name='pixels_two'>
+    <CalcTimes
+      param1={<GetVariable name='pixels' />}
+      param2={<NumberParam value={2} />}
+    />
+  </SetVariable>
+  <SetVariable name='output_dim'>
+    <CalcTimes
+      param1={<GetVariable name='pixels' />}
+      param2={<GetVariable name='channels' />}
     />
   </SetVariable>
   {keepZ ||

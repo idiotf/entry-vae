@@ -1,11 +1,12 @@
 import { Block } from 'entry-jsx'
 import { useContext } from 'react'
 import { CalcDivide, CalcMinus, CalcMod, CalcOperation, CalcPlus, CalcShare, CalcTimes } from './calculate'
-import { AddVariableNumber, GetValueOfList, GetVariable, SetVariable, SetVariableNumber } from './variable'
+import { AddVariableNumber, GetValueOfList, GetVariable, SetVariable, SetVariableNumber, type VariableName } from './variable'
 import { NumberParam, StringParam } from './param-block'
 import { DutscriptFlagContext } from './branch'
 import { CharAt, JoinString } from './string'
 import { RepeatVariable } from './repeat'
+import { IfElse, IsEqual } from './if'
 import type { MatrixName } from './matrix'
 
 const LocateTo = ({ x, y }: { x: React.ReactNode, y: React.ReactNode }) =>
@@ -47,56 +48,69 @@ const SetBrushColor = ({ children }: React.PropsWithChildren) =>
 
 const hex = '0123456789abcdef'
 
+const DutscriptConvertToHex = ({ name }: { name: VariableName }) =>
+  <JoinString
+    string1={
+      <CharAt
+        string={<StringParam value={hex} />}
+        index={
+          <CalcPlus
+            param1={
+              <CalcShare
+                param1={<GetVariable name={name} />}
+                param2={<NumberParam value={hex.length} />}
+              />
+            }
+            param2={<NumberParam value={1} />}
+          />
+        }
+      />
+    }
+    string2={
+      <CharAt
+        string={<StringParam value={hex} />}
+        index={
+          <CalcPlus
+            param1={
+              <CalcMod
+                param1={<GetVariable name={name} />}
+                param2={<NumberParam value={hex.length} />}
+              />
+            }
+            param2={<NumberParam value={1} />}
+          />
+        }
+      />
+    }
+  />
+
+const RoundToByte = ({ children }: React.PropsWithChildren) =>
+  <CalcOperation operation='round'>
+    <CalcTimes
+      param1={children}
+      param2={<NumberParam value={255} />}
+    />
+  </CalcOperation>
+
 export const SetColorToLuminance = ({ children }: React.PropsWithChildren) => <>
   <SetVariable name='sum'>
-    <CalcOperation operation='round'>
-      <CalcTimes
-        param1={children}
-        param2={<NumberParam value={255} />}
-      />
-    </CalcOperation>
+    <RoundToByte>
+      {children}
+    </RoundToByte>
   </SetVariable>
 
   {useContext(DutscriptFlagContext) ? <>
     <SetVariable name='sum'>
-      <JoinString
-        string1={
-          <CharAt
-            string={<StringParam value={hex} />}
-            index={
-              <CalcPlus
-                param1={
-                  <CalcShare
-                    param1={<GetVariable name='sum' />}
-                    param2={<NumberParam value={hex.length} />}
-                  />
-                }
-                param2={<NumberParam value={1} />}
-              />
-            }
-          />
-        }
-        string2={
-          <CharAt
-            string={<StringParam value={hex} />}
-            index={
-              <CalcPlus
-                param1={
-                  <CalcMod
-                    param1={<GetVariable name='sum' />}
-                    param2={<NumberParam value={hex.length} />}
-                  />
-                }
-                param2={<NumberParam value={1} />}
-              />
-            }
-          />
-        }
-      />
+      <DutscriptConvertToHex name='sum' />
     </SetVariable>
     <SetBrushColor>
       <JoinString
-        string1={<JoinString string1={<GetVariable name='sum' />} string2={<GetVariable name='sum' />} />}
+        string1={
+          <JoinString
+            string1={<GetVariable name='sum' />}
+            string2={<GetVariable name='sum' />}
+          />
+        }
         string2={<GetVariable name='sum' />}
       />
     </SetBrushColor>
@@ -111,6 +125,114 @@ export const SetColorToLuminance = ({ children }: React.PropsWithChildren) => <>
   }
 </>
 
+export const SetColorToRGB = ({ r, g, b }: {
+  r: React.ReactNode
+  g: React.ReactNode
+  b: React.ReactNode
+}) => <>
+  <SetVariable name='r'>
+    <RoundToByte>
+      {r}
+    </RoundToByte>
+  </SetVariable>
+
+  <SetVariable name='g'>
+    <RoundToByte>
+      {g}
+    </RoundToByte>
+  </SetVariable>
+
+  <SetVariable name='b'>
+    <RoundToByte>
+      {b}
+    </RoundToByte>
+  </SetVariable>
+
+  {useContext(DutscriptFlagContext) ? <>
+    <SetVariable name='r'>
+      <DutscriptConvertToHex name='r' />
+    </SetVariable>
+
+    <SetVariable name='g'>
+      <DutscriptConvertToHex name='g' />
+    </SetVariable>
+
+    <SetVariable name='b'>
+      <DutscriptConvertToHex name='b' />
+    </SetVariable>
+
+    <SetBrushColor>
+      <JoinString
+        string1={
+          <JoinString
+            string1={<GetVariable name='r' />}
+            string2={<GetVariable name='g' />}
+          />
+        }
+        string2={<GetVariable name='b' />}
+      />
+    </SetBrushColor>
+  </> :
+    <SetBrushColor>
+      <Block type='change_rgb_to_hex'>
+        <GetVariable name='r' />
+        <GetVariable name='g' />
+        <GetVariable name='b' />
+      </Block>
+    </SetBrushColor>
+  }
+</>
+
+
+const RenderLoop = ({ name, isRGB }: { name: MatrixName, isRGB?: boolean }) =>
+  <RepeatVariable name='height'>
+    <StartDrawing />
+    <RepeatVariable name='width'>
+      {isRGB ?
+        <SetColorToRGB
+          r={
+            <GetValueOfList name={name}>
+              <GetVariable name='i' />
+            </GetValueOfList>
+          }
+          g={
+            <GetValueOfList name={name}>
+              <CalcPlus
+                param1={<GetVariable name='i' />}
+                param2={<GetVariable name='pixels' />}
+              />
+            </GetValueOfList>
+          }
+          b={
+            <GetValueOfList name={name}>
+              <CalcPlus
+                param1={<GetVariable name='i' />}
+                param2={<GetVariable name='pixels_two' />}
+              />
+            </GetValueOfList>
+          }
+        />
+      : <SetColorToLuminance>
+          <GetValueOfList name={name}>
+            <GetVariable name='i' />
+          </GetValueOfList>
+        </SetColorToLuminance>
+      }
+      <MoveXBy>
+        <GetVariable name='j' />
+      </MoveXBy>
+
+      <AddVariableNumber name='i' value={1} />
+    </RepeatVariable>
+
+    <StopDrawing />
+    <LocateXTo>
+      <NumberParam value={-100} />
+    </LocateXTo>
+    <MoveYBy>
+      <GetVariable name='k' />
+    </MoveYBy>
+  </RepeatVariable>
 
 export const Render = ({ name }: { name: MatrixName }) => <>
   <SetVariableNumber name='i' value={1} />
@@ -148,27 +270,14 @@ export const Render = ({ name }: { name: MatrixName }) => <>
     />
   </SetBrushWidth>
 
-  <RepeatVariable name='height'>
-    <StartDrawing />
-    <RepeatVariable name='width'>
-      <SetColorToLuminance>
-        <GetValueOfList name={name}>
-          <GetVariable name='i' />
-        </GetValueOfList>
-      </SetColorToLuminance>
-      <MoveXBy>
-        <GetVariable name='j' />
-      </MoveXBy>
-
-      <AddVariableNumber name='i' value={1} />
-    </RepeatVariable>
-
-    <StopDrawing />
-    <LocateXTo>
-      <NumberParam value={-100} />
-    </LocateXTo>
-    <MoveYBy>
-      <GetVariable name='k' />
-    </MoveYBy>
-  </RepeatVariable>
+  <IfElse
+    condition={
+      <IsEqual
+        param1={<GetVariable name='channels' />}
+        param2={<NumberParam value={3} />}
+      />
+    }
+    whenTrue={<RenderLoop name={name} isRGB />}
+    whenFalse={<RenderLoop name={name} />}
+  />
 </>

@@ -5,24 +5,28 @@ import { NumberParam } from './param-block'
 import { CalcPlus } from './calculate'
 import type { MatrixName } from './matrix'
 
-const width = 20
-const height = 20
-
 const variables = {
   // 출력 해상도
-  width,
-  height,
+  width: 0,
+  height: 0,
+  pixels: 0,
+  pixels_two: 0,
+  channels: 0,
 
   // 행렬 차원
-  latent_dim: 16,
-  hidden_dim: 64,
-  output_dim: width * height,
+  latent_dim: 0,
+  hidden_dim: 0,
+  output_dim: 0,
 
-  // 행렬곱 인덱스
+  // 행렬곱/렌더링
   i: 0,
   j: 0,
   k: 0,
   sum: 0,
+
+  r: 0,
+  g: 0,
+  b: 0,
 
   // exp
   exp: 0,
@@ -30,6 +34,13 @@ const variables = {
 
 export type VariableName = keyof typeof variables
 export const getVar = (name: VariableName | 1) => name === 1 ? 1 : variables[name]
+
+export async function setWeightSizeFromFile(name: string) {
+  const { dim } = (await import(`../weights/${name}.json`)).default
+  Object.assign(variables, dim)
+  variables.output_dim = dim.width * dim.height * dim.channels
+}
+
 
 export const Variables = () => Object.entries(variables).map(([name, value], i) =>
   <Variable key={i} name={name} value={value} />

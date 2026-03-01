@@ -18,20 +18,35 @@ export const IfElse = ({ condition, whenTrue, whenFalse }: {
     </Statement>
   </Block>
 
-export const IsGreaterThan = ({ number1, number2 }: {
-  number1: React.ReactNode
-  number2: React.ReactNode
+export const IsEqual = ({ param1, param2 }: {
+  param1: React.ReactNode
+  param2: React.ReactNode
 }) => useContext(DutscriptFlagContext) ?
   <Block type='boolean_basic_operator'>
-    {number1}
+    {param1}
+    <Param value='EQUAL' />
+    {param2}
+  </Block>
+: <Block type='boolean_equal'>
+    {param1}
+    <Param />
+    {param2}
+  </Block>
+
+export const IsGreaterThan = ({ param1, param2 }: {
+  param1: React.ReactNode
+  param2: React.ReactNode
+}) => useContext(DutscriptFlagContext) ?
+  <Block type='boolean_basic_operator'>
+    {param1}
     <Param value='GREATER' />
-    {number2}
+    {param2}
   </Block>
 : <Block type='boolean_bigger'>
-    {number1}
+    {param1}
     <Param />
-    {number2}
+    {param2}
   </Block>
 
 export const IsPositiveNumber = ({ children }: React.PropsWithChildren) =>
-  <IsGreaterThan number1={children} number2={<NumberParam value={0} />} />
+  <IsGreaterThan param1={children} param2={<NumberParam value={0} />} />
