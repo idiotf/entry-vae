@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Block, Project, Scene, Statement, TextBoxObject } from 'entry-jsx'
+import { Block, Project, Scene, Statement, SpriteObject, Picture } from 'entry-jsx'
 import { ComputeMatrix, InitData, Matrices } from './matrix'
 import { DevTimerBranch, DutscriptBranch } from './branch'
 import { Variables } from './variable'
@@ -21,16 +21,32 @@ export const Main = ({ test }: { test?: boolean }) => {
       <Matrices />
 
       <Scene name='장면 1'>
-        <TextBoxObject name='VAE'>
+        <SpriteObject
+          name='썸네일'
+          visible
+          lock
+          width={20}
+          height={20}
+          scaleX={10}
+          scaleY={10}
+        >
+          <Picture
+            name='썸네일'
+            fileurl='/uploads/철수.png'
+            width={20}
+            height={20}
+          />
+
           <Statement>
             <Block type='when_run_button_click' />
+            <Block type='hide' />
             <TimerBranch>
               <DutscriptBranch>
                 <MainCode test={test} />
               </DutscriptBranch>
             </TimerBranch>
           </Statement>
-        </TextBoxObject>
+        </SpriteObject>
       </Scene>
     </Project>
   )
