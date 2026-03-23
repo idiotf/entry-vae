@@ -32,7 +32,7 @@ export const Main = ({ test }: { test?: boolean }) => {
         >
           <Picture
             name='썸네일'
-            fileurl='/uploads/철수.png'
+            fileurl='/uploads/2t/f6/image/2tf67whus3l3qdybnzadtlni7409zjyb.png'
             width={20}
             height={20}
           />
