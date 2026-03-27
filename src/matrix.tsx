@@ -42,7 +42,10 @@ export async function setMatrixWeightFromFile(name: string) {
 export const Matrices = () => Object.entries(matrices).map(([name, value], i) =>
   <List key={i}
     name={name}
-    array={value.map(data => ({ data }))}
+    array={value.length > 5000 ? {
+      ...value.map(data => ({ data })),
+      length: '어쩔티비',
+    } as unknown as { data: unknown }[] : value.map(data => ({ data }))}
     x={-240}
     y={-135}
     width={480}
