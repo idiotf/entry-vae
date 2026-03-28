@@ -5,8 +5,8 @@ import { resolve } from 'path'
 import { Main } from './main'
 import { setWeightFromFile } from './weight'
 
-function getProjectJson() {
-  return JSON.stringify(jsxToProject(<Main />))
+function getProjectJson(isDutscript: boolean) {
+  return JSON.stringify(jsxToProject(<Main dutscript={isDutscript} />))
 }
 
 function createTar(projectJson: string) {
@@ -32,10 +32,11 @@ Flags:
   await setWeightFromFile('prod')
 
   const path = process.argv[2]
+  const isDutscript = process.argv.includes('--dutscript')
   if (path) {
     console.time('build complete')
 
-    const projectJson = getProjectJson()
+    const projectJson = getProjectJson(isDutscript)
     if (process.argv.includes('--copy'))
       await Bun.$`echo ${projectJson} | clip`
 
@@ -50,6 +51,6 @@ Flags:
     if (process.argv.includes('--open'))
       Bun.spawn(['entry', resolve(process.cwd(), path)]).unref()
   } else {
-    createTar(getProjectJson()).pipe(process.stdout)
+    createTar(getProjectJson(isDutscript)).pipe(process.stdout)
   }
 }

@@ -133,13 +133,14 @@ const blocks: Record<string, (this: never, ...args: unknown[]) => unknown> = {
 
   value_of_index_from_list(_0, id, _1, index) {
     const list = project.variables.find(v => v.id == id)!
-    if (!('array' in list && Array.isArray(list.array)))
+    if (!('array' in list))
       throw TypeError(`[value_of_index_from_list] Cannot get ${index}th of list ${list.name}: not array`)
 
-    if (typeof index != 'number' || !(1 <= index && index <= list.array.length))
-      throw RangeError(`[value_of_index_from_list] Cannot get ${index}th of list ${list.name}: range overflow (length = ${list.array.length})`)
+    const array = list.array as { data: unknown }[]
+    if (typeof index != 'number' || 1 > index || index > array.length)
+      throw RangeError(`[value_of_index_from_list] Cannot get ${index}th of list ${list.name}: range overflow (length = ${array.length})`)
 
-    return list.array[index - 1].data
+    return array[index - 1]?.data
   },
 
   add_value_to_list(data, id) {

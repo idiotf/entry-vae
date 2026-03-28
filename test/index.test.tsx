@@ -23,7 +23,7 @@ function getList(project: Awaited<ReturnType<typeof runProject>>, name: MatrixNa
 async function testVAE(name: string) {
   await setWeightFromFile(name)
 
-  const project = runProject(<Main test />)
+  const project = runProject(<Main test dutscript />)
   const gen = toFixed(getList(project, 'gen'))
 
   expect(gen).toEqual(toFixed([await computeVAE()].flat(6)))

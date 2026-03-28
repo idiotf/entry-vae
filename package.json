@@ -24,9 +24,10 @@
     "tar-stream": "^3.1.7"
   },
   "scripts": {
-    "dev": "bun --hot .",
+    "dev": "bun --hot . dist/entry.ent --open",
     "lint": "bunx --bun tsc && bunx --bun eslint",
-    "build": "NODE_ENV=production bun .",
+    "build-entry": "NODE_ENV=production bun . dist/entry.ent --copy",
+    "build-dutscript": "NODE_ENV=production bun . dist/dutscript.ent --dutscript --copy",
     "encode": "python encoder"
   }
 }

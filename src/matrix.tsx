@@ -6,6 +6,8 @@ import { IfElse, IsPositiveNumber } from './if'
 import { NumberParam } from './param-block'
 import { GaussianRandom } from './random'
 import { RepeatVariable } from './repeat'
+import { useContext } from 'react'
+import { DutscriptFlagContext } from './branch'
 
 const matrixSizes = {
   z: [1, 'latent_dim'],
@@ -39,19 +41,23 @@ export async function setMatrixWeightFromFile(name: string) {
 }
 
 
-export const Matrices = () => Object.entries(matrices).map(([name, value], i) =>
-  <List key={i}
-    name={name}
-    array={value.length > 5000 ? {
-      ...value.map(data => ({ data })),
-      length: '어쩔티비',
-    } as unknown as { data: unknown }[] : value.map(data => ({ data }))}
-    x={-240}
-    y={-135}
-    width={480}
-    height={270}
-  />
-)
+export const Matrices = () => {
+  const isDutscript = useContext(DutscriptFlagContext)
+
+  return Object.entries(matrices).map(([name, value], i) =>
+    <List key={i}
+      name={name}
+      array={!isDutscript && value.length > 5000 ? {
+        ...value.map(data => ({ data })),
+        length: '어쩔티비',
+      } as unknown as { data: unknown }[] : value.map(data => ({ data }))}
+      x={-240}
+      y={-135}
+      width={480}
+      height={270}
+    />
+  )
+}
 
 export const InitData = ({ keepZ }: { keepZ?: boolean }) => <>
   <SetVariable name='pixels'>
