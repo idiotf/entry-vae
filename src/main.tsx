@@ -45,7 +45,7 @@ export const Main = ({ test, dutscript = false }: {
               <Block type='when_run_button_click' />
               <Block type='hide' />
               <TimerBranch>
-                  <MainCode test={test} />
+                <MainCode test={test} />
               </TimerBranch>
             </Statement>
           </SpriteObject>
