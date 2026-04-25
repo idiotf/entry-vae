@@ -129,7 +129,7 @@ export const SetColorToRGB = ({ r, g, b }: {
   r: React.ReactNode
   g: React.ReactNode
   b: React.ReactNode
-}) => <>
+}) => useContext(DutscriptFlagContext) ? <>
   <SetVariable name='r'>
     <RoundToByte>
       {r}
@@ -148,40 +148,43 @@ export const SetColorToRGB = ({ r, g, b }: {
     </RoundToByte>
   </SetVariable>
 
-  {useContext(DutscriptFlagContext) ? <>
-    <SetVariable name='r'>
-      <DutscriptConvertToHex name='r' />
-    </SetVariable>
+  <SetVariable name='r'>
+    <DutscriptConvertToHex name='r' />
+  </SetVariable>
 
-    <SetVariable name='g'>
-      <DutscriptConvertToHex name='g' />
-    </SetVariable>
+  <SetVariable name='g'>
+    <DutscriptConvertToHex name='g' />
+  </SetVariable>
 
-    <SetVariable name='b'>
-      <DutscriptConvertToHex name='b' />
-    </SetVariable>
+  <SetVariable name='b'>
+    <DutscriptConvertToHex name='b' />
+  </SetVariable>
 
-    <SetBrushColor>
-      <JoinString
-        string1={
-          <JoinString
-            string1={<GetVariable name='r' />}
-            string2={<GetVariable name='g' />}
-          />
-        }
-        string2={<GetVariable name='b' />}
-      />
-    </SetBrushColor>
-  </> :
-    <SetBrushColor>
-      <Block type='change_rgb_to_hex'>
-        <GetVariable name='r' />
-        <GetVariable name='g' />
-        <GetVariable name='b' />
-      </Block>
-    </SetBrushColor>
-  }
-</>
+  <SetBrushColor>
+    <JoinString
+      string1={
+        <JoinString
+          string1={<GetVariable name='r' />}
+          string2={<GetVariable name='g' />}
+        />
+      }
+      string2={<GetVariable name='b' />}
+    />
+  </SetBrushColor>
+</> :
+  <SetBrushColor>
+    <Block type='change_rgb_to_hex'>
+      <RoundToByte>
+        {r}
+      </RoundToByte>
+      <RoundToByte>
+        {g}
+      </RoundToByte>
+      <RoundToByte>
+        {b}
+      </RoundToByte>
+    </Block>
+  </SetBrushColor>
 
 
 const RenderLoop = ({ name, isRGB }: { name: MatrixName, isRGB?: boolean }) =>
