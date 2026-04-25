@@ -4,24 +4,25 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^9.39.4",
     "@tensorflow/tfjs": "^4.22.0",
     "@types/bun": "latest",
     "@types/react": "^19.2.8",
     "@types/tar-stream": "^3.1.4",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "jiti": "^2.6.1",
-    "typescript-eslint": "^8.53.1"
+    "typescript-eslint": "^8.59.0"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "entry-jsx": "packages/entry-jsx-0.2.0.tgz",
-    "react": "^19.2.3",
-    "tar-stream": "^3.1.7"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tar-stream": "^3.1.8"
   },
   "scripts": {
     "dev": "bun --hot . dist/entry.ent --open",
